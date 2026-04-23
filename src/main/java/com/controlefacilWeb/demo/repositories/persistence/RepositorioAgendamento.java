@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-
+package com.controlefacilWeb.demo.repositories.persistence;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -14,10 +14,6 @@ import java.util.logging.Logger;
 
 import com.controlefacilWeb.demo.database.AccessDatabase;
 import com.controlefacilWeb.demo.models.AgendamentoModel;
-import com.controlefacilWeb.demo.models.CartaoModel;
-import com.controlefacilWeb.demo.repositories.persistence.RepositorioCartaoInterface;
-import com.controlefacilWeb.demo.repositories.persistence.RepositorioFuncionario;
-import com.controlefacilWeb.demo.util.EnumTipoMovimentacao;
 import com.controlefacilWeb.demo.util.Util;
 
 
@@ -25,7 +21,7 @@ import com.controlefacilWeb.demo.util.Util;
  *
  * @author celio.junior
  */
-public class RepositorioAgendamento implements RepositorioCartaoInterface {
+public class RepositorioAgendamento {
 
     public RepositorioAgendamento() {
         super();
@@ -172,54 +168,6 @@ public class RepositorioAgendamento implements RepositorioCartaoInterface {
         }
         return null;
 
-    }
-
-    @Override
-    public int Cadastrar(CartaoModel cartao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Cadastrar'");
-    }
-
-    @Override
-    public void AlterarSaldo(CartaoModel cartao, double valor, EnumTipoMovimentacao tipoTransacao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'AlterarSaldo'");
-    }
-
-    @Override
-    public int Editar(CartaoModel cartaoNovo, int codigoCartao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Editar'");
-    }
-
-    @Override
-    public CartaoModel Procurar(int codigoCartao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Procurar'");
-    }
-
-    @Override
-    public int Excluir(int codigoCartao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'Excluir'");
-    }
-
-    @Override
-    public ArrayList<ArrayList> listarTodosCartoes(char status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'listarTodosCartoes'");
-    }
-
-    @Override
-    public ArrayList<ArrayList> PreencherComboCartoes(char status) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'PreencherComboCartoes'");
-    }
-
-    @Override
-    public double VerificarSaldo(int codigoCartao) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'VerificarSaldo'");
     }
 
 }

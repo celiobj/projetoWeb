@@ -1,9 +1,8 @@
 package com.controlefacilWeb.demo.controllers;
 
 import com.controlefacilWeb.demo.models.UsuarioModel;
-import com.controlefacilWeb.demo.services.UsuarioService;
+import com.controlefacilWeb.demo.repositories.persistence.RepositorioUsuario;
 import jakarta.servlet.http.HttpSession;
-import lombok.RequiredArgsConstructor;
 import com.controlefacilWeb.demo.util.Util;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
  * em seguida, contra o banco de dados via UsuarioService.
  */
 @Controller
-@RequiredArgsConstructor
 public class LoginController {
 
     @Value("${app.login.usuario}")
@@ -28,7 +26,11 @@ public class LoginController {
     @Value("${app.login.senha}")
     private String senhaConfigurada;
 
-    private final UsuarioService usuarioService;
+    private final RepositorioUsuario repositorioUsuario;
+
+    public LoginController() {
+        this.repositorioUsuario = new RepositorioUsuario();
+    }
 
     /** GET /login — exibe o formulário de login */
     @GetMapping("/login")
@@ -55,7 +57,10 @@ public class LoginController {
 
         // 2. Credenciais do banco de dados
         try {
-            UsuarioModel usuarioDb = usuarioService.logar(usuario, Util.criptografarSenha(senha));
+            UsuarioModel req = new UsuarioModel();
+            req.setUser(usuario);
+            req.setPass(Util.criptografarSenha(senha));
+            UsuarioModel usuarioDb = repositorioUsuario.Logar(req, null);
             if (usuarioDb != null) {
                 session.setAttribute("usuarioLogado", usuarioDb.getUser());
                 session.setAttribute("tipoUsuario", usuarioDb.getTipo());

@@ -102,11 +102,33 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/produtos">Produtos</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownProduto" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-box me-1"></i>Produto
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownProduto">
+                            <li><a class="dropdown-item" href="/produtos">
+                                <i class="bi bi-list me-2"></i>Produtos
+                            </a></li>
+                            <li><a class="dropdown-item" href="/produtos/novo">
+                                <i class="bi bi-plus-circle me-2"></i>Cadastro de Produto
+                            </a></li>
+                        </ul>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/produtos/novo">Novo Produto</a>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownUsuario" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person me-1"></i>Usuário
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUsuario">
+                            <li><a class="dropdown-item" href="/usuarios">
+                                <i class="bi bi-people me-2"></i>Listagem de Usuários
+                            </a></li>
+                            <li><a class="dropdown-item" href="/usuarios/novo">
+                                <i class="bi bi-person-plus me-2"></i>Cadastro de Usuário
+                            </a></li>
+                        </ul>
                     </li>
                     <li class="nav-item ms-2">
                         <a class="nav-link btn btn-outline-light btn-sm px-3"

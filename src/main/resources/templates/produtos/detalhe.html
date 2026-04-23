@@ -133,19 +133,22 @@
 
                     <div class="detail-row">
                         <div class="detail-item">
-                            <div class="detail-label"><i class="bi bi-hash"></i> ID</div>
-                            <div class="detail-value" th:text="${produto.id}"></div>
+                            <div class="detail-label"><i class="bi bi-hash"></i> Código</div>
+                            <div class="detail-value" th:text="${produto.codigoProduto}"></div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label"><i class="bi bi-barcode"></i> Código de Barras</div>
-                            <div class="detail-value" th:text="${produto.codigoBarras}"></div>
+                            <div class="detail-label"><i class="bi bi-toggle-on"></i> Status</div>
+                            <div class="detail-value">
+                                <span th:if="${produto.isativo == 'S'}" class="badge bg-success">Ativo</span>
+                                <span th:unless="${produto.isativo == 'S'}" class="badge bg-danger">Inativo</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="detail-row">
                         <div class="detail-item">
-                            <div class="detail-label"><i class="bi bi-tag"></i> Preço</div>
-                            <div class="price-large">R$ <span th:text="${#numbers.formatDecimal(produto.preco, 1, 2, 'COMMA')}"></span></div>
+                            <div class="detail-label"><i class="bi bi-tag"></i> Preço de Venda</div>
+                            <div class="price-large">R$ <span th:text="${produto.valorvenda != null ? #numbers.formatDecimal(produto.valorvenda, 1, 2, 'COMMA') : '0,00'}"></span></div>
                         </div>
 
                     <div class="detail-row">
@@ -160,10 +163,8 @@
                             </div>
                         </div>
                         <div class="detail-item">
-                            <div class="detail-label"><i class="bi bi-calendar"></i> Última Atualização</div>
-                            <div class="detail-value">
-                                <small th:text="${#dates.format(new java.util.Date(produto.dataAtualizacao), 'dd/MM/yyyy HH:mm')}"></small>
-                            </div>
+                            <div class="detail-label"><i class="bi bi-percent"></i> Valor de Comissão</div>
+                            <div class="detail-value">R$ <span th:text="${produto.valorcomissao != null ? #numbers.formatDecimal(produto.valorcomissao, 1, 2, 'COMMA') : '0,00'}"></span></div>
                         </div>
                     </div>
 
@@ -173,10 +174,10 @@
                     </div>
 
                     <div class="btn-group-actions">
-                        <a th:href="@{/produtos/{id}/editar(id=${produto.id})}" class="btn btn-warning btn-custom">
+                        <a th:href="@{/produtos/{id}/editar(id=${produto.codigoProduto})}" class="btn btn-warning btn-custom">
                             <i class="bi bi-pencil"></i> Editar
                         </a>
-                        <form method="post" th:action="@{/produtos/{id}/deletar(id=${produto.id})}" 
+                        <form method="post" th:action="@{/produtos/{id}/deletar(id=${produto.codigoProduto})}" 
                               style="display:inline;" onsubmit="return confirm('Tem certeza que deseja deletar este produto?');">
                             <button type="submit" class="btn btn-danger btn-custom">
                                 <i class="bi bi-trash"></i> Deletar

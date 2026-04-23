@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Usuário - ControleFácil</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body { background-color: #f5f7fa; }
+        .navbar { background: #667eea !important; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .navbar-brand { font-weight: bold; font-size: 1.3rem; }
+        .container-main { margin-top: 40px; margin-bottom: 40px; }
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 30px;
+        }
+        .form-title {
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+        .form-group { margin-bottom: 20px; }
+        .form-control, .form-select {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102,126,234,0.25);
+        }
+        .form-label { font-weight: 600; color: #333; margin-bottom: 8px; }
+        .btn-group-submit {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn-custom {
+            border-radius: 50px;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-custom:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .btn-primary.btn-custom { background: #667eea; border-color: #667eea; }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/"><i class="bi bi-graph-up"></i> ControleFácil</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dropdownProduto" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-box me-1"></i>Produto
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownProduto">
+                            <li><a class="dropdown-item" href="/produtos">
+                                <i class="bi bi-list me-2"></i>Produtos
+                            </a></li>
+                            <li><a class="dropdown-item" href="/produtos/novo">
+                                <i class="bi bi-plus-circle me-2"></i>Cadastro de Produto
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle active" href="#" id="dropdownUsuario" role="button"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-person me-1"></i>Usuário
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownUsuario">
+                            <li><a class="dropdown-item" href="/usuarios">
+                                <i class="bi bi-people me-2"></i>Listagem de Usuários
+                            </a></li>
+                            <li><a class="dropdown-item active" href="/usuarios/novo">
+                                <i class="bi bi-person-plus me-2"></i>Cadastro de Usuário
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container container-main">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3">
+                <div class="form-card">
+                    <h2 class="form-title"><i class="bi bi-person-plus"></i> Cadastro de Usuário</h2>
+
+                    <div id="alertMsg" class="alert d-none" role="alert"></div>
+
+                    <form id="formUsuario">
+                        <div class="form-group">
+                            <label for="user" class="form-label">Login *</label>
+                            <input type="text" class="form-control" id="user" name="user"
+                                   placeholder="Ex: joao.silva" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="pass" class="form-label">Senha *</label>
+                            <input type="password" class="form-control" id="pass" name="pass"
+                                   placeholder="Digite a senha" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="tipo" class="form-label">Tipo *</label>
+                            <select class="form-select" id="tipo" name="tipo" required>
+                                <option value="">Selecione...</option>
+                                <option value="1">Administrador</option>
+                                <option value="2">Gerente</option>
+                                <option value="3">Operador</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="codigoLoja" class="form-label">Código da Loja *</label>
+                            <input type="number" class="form-control" id="codigoLoja" name="codigoLoja"
+                                   placeholder="Ex: 1" required min="1">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Forçar troca de senha no primeiro acesso?</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="forcarSenha" id="forcarSim" value="S">
+                                <label class="form-check-label" for="forcarSim">Sim</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="forcarSenha" id="forcarNao" value="N" checked>
+                                <label class="form-check-label" for="forcarNao">Não</label>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-submit">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="bi bi-check-lg me-1"></i> Salvar
+                            </button>
+                            <a href="/usuarios" class="btn btn-light btn-custom">
+                                <i class="bi bi-arrow-left me-1"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('formUsuario').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const forcarSenha = document.querySelector('input[name="forcarSenha"]:checked').value;
+            const payload = {
+                user: document.getElementById('user').value,
+                pass: document.getElementById('pass').value,
+                tipo: parseInt(document.getElementById('tipo').value),
+                codigoLoja: parseInt(document.getElementById('codigoLoja').value),
+                forcarSenha: forcarSenha,
+                codigo: 0
+            };
+
+            fetch('/api/usuarios', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            })
+            .then(function(res) {
+                if (res.ok || res.status === 201) {
+                    window.location.href = '/usuarios?mensagem=Usu%C3%A1rio+cadastrado+com+sucesso&tipo=sucesso';
+                } else {
+                    return res.text().then(function() {
+                        mostrarAlerta('Erro ao cadastrar usuário. Verifique os dados e tente novamente.', 'danger');
+                    });
+                }
+            })
+            .catch(function() {
+                mostrarAlerta('Erro de conexão. Tente novamente.', 'danger');
+            });
+        });
+
+        function mostrarAlerta(msg, tipo) {
+            const el = document.getElementById('alertMsg');
+            el.textContent = msg;
+            el.className = 'alert alert-' + tipo;
+        }
+    </script>
+</body>
+</html>

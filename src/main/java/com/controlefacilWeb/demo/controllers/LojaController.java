@@ -38,7 +38,7 @@ public class LojaController {
         try {
             if (!Login.isIsService()) {
                 rl = new RepositorioLoja();
-                ProdutoController pc = new ProdutoController();
+                ProdutoController pc = new ProdutoController(null);
                 ArrayList<ArrayList> produtos = pc.listarTodosProdutos();
                 return rl.CadastrarLoja(loja, produtos, con);
             } else {

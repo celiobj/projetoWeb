@@ -104,7 +104,7 @@ public class RepositorioUsuario implements RepositorioUsuarioInterface {
             AccessDatabase a = new AccessDatabase();
             Connection con = conn != null ? !conn.isClosed() ? conn : conn : a.conectar();
             Statement st = con.createStatement();
-            ResultSet rs = st.executeQuery("SELECT cdusuario,login,tipo "
+            ResultSet rs = st.executeQuery("SELECT cdusuario,login,tipo,forcarsenha "
                     + "FROM public.usuario "
                     // + "WHERE codigoloja = " + codigoLoja + " "
                     + "ORDER BY cdusuario");

@@ -1,198 +1,164 @@
 package com.controlefacilWeb.demo.controllers;
 
-import com.controlefacilWeb.demo.models.Produto;
-import com.controlefacilWeb.demo.services.ProdutoService;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
+import com.controlefacilWeb.demo.models.ProdutoModel;
+import com.controlefacilWeb.demo.repositories.persistence.RepositorioProduto;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.controlefacilWeb.demo.util.Util;
 
-import java.util.List;
+import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
-/**
- * Controller para Produto
- * Gerencia as requisições HTTP relacionadas a produtos
- */
 @Controller
 @RequestMapping("/produtos")
-@RequiredArgsConstructor
 public class ProdutoController {
 
-    private final ProdutoService produtoService;
+    private final RepositorioProduto rp;
 
-    /**
-     * GET /produtos - Exibe lista de todos os produtos
-     */
+    public ProdutoController() {
+        this.rp = new RepositorioProduto();
+    }
+
+    // Compatibilidade com LojaController que chama new ProdutoController(null)
+    public ProdutoController(Connection con) {
+        this.rp = new RepositorioProduto();
+    }
+
+    // ---------------------------------------------------------------
+    // Endpoints Spring MVC
+    // ---------------------------------------------------------------
+
     @GetMapping
     public String listar(Model model) {
-        List<Produto> produtos = produtoService.obterTodos();
+        List<ProdutoModel> produtos;
+        try {
+            ArrayList<ArrayList> rows = rp.ListarTodosProdutos();
+            produtos = converterLista(rows);
+        } catch (Exception e) {
+            e.printStackTrace();
+            produtos = new ArrayList<>();
+        }
         model.addAttribute("produtos", produtos);
         model.addAttribute("totalProdutos", produtos.size());
         return "produtos/lista";
     }
 
-    /**
-     * GET /produtos/novo - Exibe formulário para criar novo produto
-     */
     @GetMapping("/novo")
     public String novo(Model model) {
-        model.addAttribute("produto", new Produto());
+        model.addAttribute("produto", new ProdutoModel());
         return "produtos/formulario";
     }
 
-    /**
-     * POST /produtos - Cria um novo produto
-     */
     @PostMapping
-    public String criar(@Valid @ModelAttribute Produto produto, BindingResult bindingResult,
-                       RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "produtos/formulario";
-        }
+    public String criar(@ModelAttribute ProdutoModel produto, RedirectAttributes redirectAttributes) {
         try {
-            produtoService.criar(produto);
-            redirectAttributes.addFlashAttribute("mensagem", "Produto criado com sucesso!");
-            redirectAttributes.addFlashAttribute("tipo", "sucesso");
-            return "redirect:/produtos";
+            int resultado = rp.CadastrarProduto(produto, new ArrayList<>());
+            if (resultado == 1) {
+                redirectAttributes.addFlashAttribute("mensagem", "Produto criado com sucesso!");
+                redirectAttributes.addFlashAttribute("tipo", "sucesso");
+                return "redirect:/produtos";
+            }
+            redirectAttributes.addFlashAttribute("mensagem", "Erro ao criar produto.");
+            redirectAttributes.addFlashAttribute("tipo", "erro");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagem", "Erro ao criar produto: " + e.getMessage());
             redirectAttributes.addFlashAttribute("tipo", "erro");
-            return "redirect:/produtos/novo";
         }
+        return "redirect:/produtos/novo";
     }
 
-    /**
-     * GET /produtos/{id} - Exibe detalhes de um produto
-     */
     @GetMapping("/{id}")
-    public String exibir(@PathVariable Long id, Model model) {
-        return produtoService.obterPorId(id)
-                .map(produto -> {
-                    model.addAttribute("produto", produto);
-                    return "produtos/detalhe";
-                })
-                .orElse("redirect:/produtos");
+    public String exibir(@PathVariable int id, Model model) {
+        ProdutoModel produto = rp.Procurar(id);
+        if (produto == null) return "redirect:/produtos";
+        model.addAttribute("produto", produto);
+        return "produtos/detalhe";
     }
 
-    /**
-     * GET /produtos/{id}/editar - Exibe formulário para editar produto
-     */
     @GetMapping("/{id}/editar")
-    public String editar(@PathVariable Long id, Model model) {
-        return produtoService.obterPorId(id)
-                .map(produto -> {
-                    model.addAttribute("produto", produto);
-                    return "produtos/formulario";
-                })
-                .orElse("redirect:/produtos");
+    public String editar(@PathVariable int id, Model model) {
+        ProdutoModel produto = rp.Procurar(id);
+        if (produto == null) return "redirect:/produtos";
+        model.addAttribute("produto", produto);
+        return "produtos/formulario";
     }
 
-    /**
-     * PUT /produtos/{id} - Atualiza um produto existente
-     */
     @PostMapping("/{id}")
-    public String atualizar(@PathVariable Long id, @Valid @ModelAttribute Produto produto,
-                           BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-            return "produtos/formulario";
-        }
+    public String atualizar(@PathVariable int id, @ModelAttribute ProdutoModel produto,
+                            RedirectAttributes redirectAttributes) {
         try {
-            produtoService.atualizar(id, produto);
-            redirectAttributes.addFlashAttribute("mensagem", "Produto atualizado com sucesso!");
-            redirectAttributes.addFlashAttribute("tipo", "sucesso");
-            return "redirect:/produtos/" + id;
+            int resultado = rp.AlterararProduto(produto, id);
+            if (resultado == 1) {
+                redirectAttributes.addFlashAttribute("mensagem", "Produto atualizado com sucesso!");
+                redirectAttributes.addFlashAttribute("tipo", "sucesso");
+                return "redirect:/produtos/" + id;
+            }
+            redirectAttributes.addFlashAttribute("mensagem", "Erro ao atualizar produto.");
+            redirectAttributes.addFlashAttribute("tipo", "erro");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("mensagem", "Erro ao atualizar produto: " + e.getMessage());
             redirectAttributes.addFlashAttribute("tipo", "erro");
-            return "redirect:/produtos/" + id + "/editar";
         }
+        return "redirect:/produtos/" + id + "/editar";
     }
 
-    /**
-     * DELETE /produtos/{id} - Deleta um produto
-     */
     @PostMapping("/{id}/deletar")
-    public String deletar(@PathVariable Long id, RedirectAttributes redirectAttributes) {
-        try {
-            produtoService.deletar(id);
-            redirectAttributes.addFlashAttribute("mensagem", "Produto deletado com sucesso!");
-            redirectAttributes.addFlashAttribute("tipo", "sucesso");
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("mensagem", "Erro ao deletar produto: " + e.getMessage());
-            redirectAttributes.addFlashAttribute("tipo", "erro");
-        }
+    public String deletar(@PathVariable int id, RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("mensagem", "Exclusão não disponível nesta versão.");
+        redirectAttributes.addFlashAttribute("tipo", "erro");
         return "redirect:/produtos";
     }
 
-    /**
-     * GET /produtos/buscar - Busca produtos por nome
-     */
     @GetMapping("/buscar")
     public String buscar(@RequestParam(required = false) String termo, Model model) {
-        List<Produto> produtos;
+        ArrayList<ArrayList> rows = rp.ListarTodosProdutos();
+        List<ProdutoModel> produtos = converterLista(rows);
         if (termo != null && !termo.isEmpty()) {
-            produtos = produtoService.buscarPorNome(termo);
-        } else {
-            produtos = produtoService.obterTodos();
+            String filtro = termo.toLowerCase();
+            produtos = produtos.stream()
+                    .filter(p -> p.getNome() != null && p.getNome().toLowerCase().contains(filtro))
+                    .collect(Collectors.toList());
         }
         model.addAttribute("produtos", produtos);
         model.addAttribute("termoBusca", termo);
         return "produtos/lista";
     }
 
-    /**
-     * GET /produtos/comestoque - Lista apenas produtos com estoque
-     */
-    @GetMapping("/comestoque")
-    public String listarComEstoque(Model model) {
-        List<Produto> produtos = produtoService.obterComEstoque();
-        model.addAttribute("produtos", produtos);
-        model.addAttribute("titulo", "Produtos em Estoque");
-        return "produtos/lista";
-    }
-
-    /**
-     * GET /produtos/codigo/{codigoBarras} - Busca produto pelo código de barras
-     */
-    @GetMapping("/codigo/{codigoBarras}")
-    public String buscarPorCodigoBarras(@PathVariable String codigoBarras, Model model, 
-                                       RedirectAttributes redirectAttributes) {
-        return produtoService.buscarPorCodigoBarras(codigoBarras)
-                .map(produto -> {
-                    model.addAttribute("produto", produto);
-                    return "produtos/detalhe";
-                })
-                .orElseGet(() -> {
-                    redirectAttributes.addFlashAttribute("mensagem", "Produto com código de barras não encontrado");
-                    redirectAttributes.addFlashAttribute("tipo", "erro");
-                    return "redirect:/produtos";
-                });
-    }
-
-   
+    // ---------------------------------------------------------------
+    // Método legado — chamado por LojaController
+    // ---------------------------------------------------------------
 
     public ArrayList<ArrayList> listarTodosProdutos() {
-        List<Produto> produtos = produtoService.obterTodos();
-        ArrayList<ArrayList> resultado = new ArrayList<>();
-        for (Produto p : produtos) {
-            ArrayList<Object> linha = new ArrayList<>();
-            linha.add(p.getId());
-            linha.add(p.getNome());
-            linha.add(p.getCodigoBarras());
-            linha.add(p.getDescricao());
-            linha.add(p.getPreco());
-            linha.add(p.getQuantidade());
-            resultado.add(linha);
-        }
-        return resultado;
+        return rp.ListarTodosProdutos();
     }
 
-    public ProdutoController() {
-        this.produtoService = null;
-        //TODO Auto-generated constructor stub
+    // ---------------------------------------------------------------
+    // Helper de conversão de linhas brutas → ProdutoModel
+    // ---------------------------------------------------------------
+
+    private List<ProdutoModel> converterLista(ArrayList<ArrayList> rows) {
+        List<ProdutoModel> lista = new ArrayList<>();
+        if (rows == null) return lista;
+        // Colunas: cdproduto, nome, descricao, quantidade, valormediocompra, valorvenda, valorcomissao, isativo
+        for (ArrayList row : rows) {
+            ProdutoModel p = new ProdutoModel();
+            if (row.size() > 0 && row.get(0) != null) p.setCodigoProduto(Integer.parseInt(row.get(0).toString()));
+            if (row.size() > 1 && row.get(1) != null) p.setNome(row.get(1).toString());
+            if (row.size() > 2 && row.get(2) != null) p.setDescricao(row.get(2).toString());
+            if (row.size() > 3 && row.get(3) != null) p.setQuantidade(Integer.parseInt(row.get(3).toString()));
+            if (row.size() > 4 && row.get(4) != null) p.setValormMedioCompra(Double.parseDouble( Util.textoParaDouble(row.get(4).toString())));
+            if (row.size() > 5 && row.get(5) != null) p.setValorvenda(Double.parseDouble(Util.textoParaDouble(row.get(5).toString())));
+            if (row.size() > 6 && row.get(6) != null) p.setValorcomissao(Double.parseDouble(Util.textoParaDouble(row.get(6).toString())));
+            if (row.size() > 7 && row.get(7) != null) {
+                String v = row.get(7).toString();
+                p.setIsativo(v.isEmpty() ? 'N' : v.charAt(0));
+            }
+            lista.add(p);
+        }
+        return lista;
     }
 }
