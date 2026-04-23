@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${produto.id != null} ? 'Editar Produto' : 'Novo Produto'"></title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background-color: #f5f7fa;
+        }
+        .navbar {
+            background: #667eea !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        .container-main {
+            margin-top: 40px;
+            margin-bottom: 40px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            padding: 30px;
+        }
+        .form-title {
+            color: #667eea;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-control, .form-select {
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            padding: 10px 15px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        .invalid-feedback {
+            display: block;
+            color: #dc3545;
+            margin-top: 5px;
+            font-size: 0.9rem;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .btn-group-submit {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn-custom {
+            border-radius: 50px;
+            padding: 10px 30px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        .btn-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary.btn-custom {
+            background: #667eea;
+        }
+        .btn-light.btn-custom {
+            color: #333;
+        }
+        .input-group-camera {
+            position: relative;
+        }
+        .btn-camera {
+            background: #667eea;
+            color: white;
+            border: 1px solid #667eea;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+        .btn-camera:hover {
+            background: #5568d3;
+            transform: scale(1.05);
+        }
+        .scanner-container {
+            text-align: center;
+            padding: 20px;
+        }
+        #qr-reader {
+            width: 100%;
+            max-width: 500px;
+            border-radius: 10px;
+        }
+        .scanner-result {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            display: none;
+        }
+        .scanner-result.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="bi bi-graph-up"></i> ControleFácil
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/produtos">Produtos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/produtos/novo">
+                            <i class="bi bi-plus-circle"></i> Novo Produto
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container container-main">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2">
+                <div class="form-card">
+                    <h2 class="form-title" th:text="${produto.id != null} ? 'Editar Produto' : 'Novo Produto'">
+                        <i class="bi bi-plus-circle"></i>
+                    </h2>
+
+                    <form th:if="${produto.id == null}" method="post" action="/produtos" th:object="${produto}">
+                        <div class="form-group">
+                            <label for="nome" class="form-label">Nome do Produto *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" th:field="*{nome}"
+                                   placeholder="Ex: Notebook Dell" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" 
+                                 th:errors="*{nome}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="codigoBarras" class="form-label">Código de Barras *</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="codigoBarras" name="codigoBarras" th:field="*{codigoBarras}"
+                                       placeholder="Ex: 7898765432109" required>
+                                <button class="btn-camera" type="button" data-bs-toggle="modal" data-bs-target="#cameraModal"
+                                        title="Escanear código de barras com câmera">
+                                    <i class="bi bi-camera"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('codigoBarras')}" 
+                                 th:errors="*{codigoBarras}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descricao" class="form-label">Descrição *</label>
+                            <textarea class="form-control" id="descricao" name="descricao" th:field="*{descricao}"
+                                      placeholder="Digite a descrição do produto..." rows="4" required></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" 
+                                 th:errors="*{descricao}"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preco" class="form-label">Preço (R$) *</label>
+                                <input type="number" class="form-control" id="preco" name="preco" th:field="*{preco}"
+                                       placeholder="0.00" step="0.01" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('preco')}" 
+                                     th:errors="*{preco}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="quantidade" class="form-label">Quantidade em Estoque *</label>
+                                <input type="number" class="form-control" id="quantidade" name="quantidade" 
+                                       th:field="*{quantidade}" placeholder="0" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('quantidade')}" 
+                                     th:errors="*{quantidade}"></div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-submit">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="bi bi-check-circle"></i> Criar Produto
+                            </button>
+                            <a href="/produtos" class="btn btn-light btn-custom">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+
+                    <form th:if="${produto.id != null}" method="post" th:action="@{/produtos/{id}(id=${produto.id})}" 
+                          th:object="${produto}">
+                        <input type="hidden" name="id" th:value="${produto.id}">
+
+                        <div class="form-group">
+                            <label for="nome" class="form-label">Nome do Produto *</label>
+                            <input type="text" class="form-control" id="nome" name="nome" th:field="*{nome}"
+                                   placeholder="Ex: Notebook Dell" required>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('nome')}" 
+                                 th:errors="*{nome}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="codigoBarras" class="form-label">Código de Barras *</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="codigoBarras" name="codigoBarras" th:field="*{codigoBarras}"
+                                       placeholder="Ex: 7898765432109" required>
+                                <button class="btn-camera" type="button" data-bs-toggle="modal" data-bs-target="#cameraModal"
+                                        title="Escanear código de barras com câmera">
+                                    <i class="bi bi-camera"></i>
+                                </button>
+                            </div>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('codigoBarras')}" 
+                                 th:errors="*{codigoBarras}"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="descricao" class="form-label">Descrição *</label>
+                            <textarea class="form-control" id="descricao" name="descricao" th:field="*{descricao}"
+                                      placeholder="Digite a descrição do produto..." rows="4" required></textarea>
+                            <div class="invalid-feedback" th:if="${#fields.hasErrors('descricao')}" 
+                                 th:errors="*{descricao}"></div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="preco" class="form-label">Preço (R$) *</label>
+                                <input type="number" class="form-control" id="preco" name="preco" th:field="*{preco}"
+                                       placeholder="0.00" step="0.01" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('preco')}" 
+                                     th:errors="*{preco}"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="quantidade" class="form-label">Quantidade em Estoque *</label>
+                                <input type="number" class="form-control" id="quantidade" name="quantidade" 
+                                       th:field="*{quantidade}" placeholder="0" required>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('quantidade')}" 
+                                     th:errors="*{quantidade}"></div>
+                            </div>
+                        </div>
+
+                        <div class="btn-group-submit">
+                            <button type="submit" class="btn btn-primary btn-custom">
+                                <i class="bi bi-check-circle"></i> Atualizar Produto
+                            </button>
+                            <a th:href="@{/produtos/{id}(id=${produto.id})}" class="btn btn-light btn-custom">
+                                <i class="bi bi-x-circle"></i> Cancelar
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para Câmera -->
+    <div class="modal fade" id="cameraModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-camera"></i> Escanear Código de Barras
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="scanner-container">
+                        <!-- Spinner de carregamento -->
+                        <div id="loading-spinner" class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Acessando câmera...</span>
+                        </div>
+                        
+                        <!-- Container de câmera -->
+                        <div id="qr-reader" style="width: 100%; display: none;"></div>
+                        
+                        <!-- Resultado detectado -->
+                        <div id="qr-reader-results" class="alert alert-success" style="display: none;">
+                            <p><strong>✓ Código Detectado:</strong></p>
+                            <p id="qr-result-value" style="font-size: 1.2rem; color: #667eea; word-break: break-all;"></p>
+                        </div>
+                        
+                        <!-- Mensagens de erro/status -->
+                        <div id="camera-error" class="alert alert-danger" style="display: none;"></div>
+                        <div id="camera-info" class="text-muted mt-3">
+                            <small><i class="bi bi-info-circle"></i> Iniciando câmera...</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" id="usarCodigoBtn" disabled>Usar Código</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Biblioteca para leitura de QR Code / Barcode (jsQR) -->
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    
+    <script>
+        let ultimoCodigoDetectado = null;
+        let videoElement = null;
+        let streamAtivo = false;
+        let contadorFrames = 0;
+
+        let cameraModal = null;
+
+        // Inicializar quando DOM estiver pronto
+        document.addEventListener('DOMContentLoaded', function() {
+            const cameraModalElement = document.getElementById('cameraModal');
+            if (cameraModalElement) {
+                cameraModal = new bootstrap.Modal(cameraModalElement, {});
+                
+                cameraModalElement.addEventListener('shown.bs.modal', function() {
+                    if (!streamAtivo) {
+                        iniciarScanner();
+                    }
+                });
+
+                cameraModalElement.addEventListener('hidden.bs.modal', function() {
+                    pararScanner();
+                });
+            }
+            
+            verificarSuporteDeCamara();
+        });
+
+        function verificarSuporteDeCamara() {
+            console.log('Verificando suporte de câmera...');
+            console.log('navigator.mediaDevices:', navigator.mediaDevices);
+            
+            const temSuporte = !!(
+                navigator.mediaDevices && 
+                navigator.mediaDevices.getUserMedia
+            );
+            
+            if (!temSuporte) {
+                console.warn('⚠️ Este navegador não suporta acesso à câmera');
+                document.querySelectorAll('button[data-bs-target="#cameraModal"]').forEach(btn => {
+                    btn.style.opacity = '0.5';
+                    btn.title = 'Câmera não disponível neste navegador';
+                });
+            } else {
+                console.log('✓ Câmera suportada!');
+            }
+        }
+
+        async function iniciarScanner() {
+            try {
+                streamAtivo = true;
+                contadorFrames = 0;
+                document.getElementById('loading-spinner').style.display = 'block';
+                document.getElementById('qr-reader').style.display = 'none';
+                document.getElementById('camera-error').style.display = 'none';
+                document.getElementById('qr-reader-results').style.display = 'none';
+                atualizarInfo('⏳ Solicitando acesso à câmera...');
+
+                // Verificar se getUserMedia está disponível
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    console.error('navigator.mediaDevices.getUserMedia não disponível');
+                    tratarErro(new Error('getUserMedia não disponível neste navegador'));
+                    return;
+                }
+
+                let stream;
+                try {
+                    // Tentar com constraints otimizadas
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'environment',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        },
+                        audio: false
+                    });
+                } catch (err) {
+                    console.warn('Constraints otimizadas não funcionaram, tentando básicas...', err.name);
+                    // Fallback para constraints mais básicas
+                    stream = await navigator.mediaDevices.getUserMedia({ 
+                        video: { facingMode: 'environment' },
+                        audio: false
+                    });
+                }
+                
+                // Criar elementos de vídeo e canvas
+                const container = document.getElementById('qr-reader');
+                container.innerHTML = '';
+                
+                videoElement = document.createElement('video');
+                videoElement.style.width = '100%';
+                videoElement.style.borderRadius = '10px';
+                videoElement.style.objectFit = 'cover';
+                videoElement.setAttribute('autoplay', true);
+                videoElement.setAttribute('playsinline', true);
+                videoElement.setAttribute('muted', true);
+                
+                const canvas = document.createElement('canvas');
+                canvas.style.display = 'none';
+                
+                const canvasContext = canvas.getContext('2d', { willReadFrequently: true });
+                
+                container.appendChild(videoElement);
+                container.appendChild(canvas);
+
+                // Atribuir stream ao vídeo
+                videoElement.srcObject = stream;
+
+                document.getElementById('loading-spinner').style.display = 'none';
+                container.style.display = 'block';
+                atualizarInfo('📷 Aponte a câmera para o código de barras');
+
+                // Iniciar scanning quando vídeo carregar
+                videoElement.onloadedmetadata = function() {
+                    console.log('✓ Câmera iniciada. Dimensões:', videoElement.videoWidth, 'x', videoElement.videoHeight);
+                    escanearFrames(videoElement, canvas, canvasContext);
+                };
+
+            } catch (err) {
+                console.error('Erro em iniciarScanner:', err);
+                tratarErro(err);
+            }
+        }
+
+        function escanearFrames(video, canvas, context) {
+            if (!streamAtivo) return;
+
+            // Processar a cada 2 frames para melhorar performance
+            contadorFrames++;
+            if (contadorFrames % 2 !== 0) {
+                requestAnimationFrame(() => escanearFrames(video, canvas, context));
+                return;
+            }
+
+            try {
+                // Verificar se vídeo tem dimensões válidas
+                if (video.videoWidth === 0 || video.videoHeight === 0) {
+                    requestAnimationFrame(() => escanearFrames(video, canvas, context));
+                    return;
+                }
+
+                // Usar dimensões do vídeo
+                canvas.width = video.videoWidth;
+                canvas.height = video.videoHeight;
+                
+                context.drawImage(video, 0, 0, canvas.width, canvas.height);
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                
+                // Tentar detectar QR code
+                if (typeof jsQR !== 'undefined' && jsQR) {
+                    const codigo = jsQR(imageData.data, imageData.width, imageData.height);
+                    
+                    if (codigo) {
+                        // Código detectado!
+                        ultimoCodigoDetectado = codigo.data;
+                        document.getElementById('qr-result-value').textContent = codigo.data;
+                        document.getElementById('qr-reader-results').style.display = 'block';
+                        document.getElementById('usarCodigoBtn').disabled = false;
+                        atualizarInfo('✓ Código detectado! Clique em "Usar Código" para continuar');
+                        
+                        if (navigator.vibrate) {
+                            navigator.vibrate([100, 50, 100, 50, 200]);
+                        }
+                        tocarSomSucesso();
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.error('Erro ao processar frame:', e);
+            }
+
+            // Continuar escaneando
+            requestAnimationFrame(() => escanearFrames(video, canvas, context));
+        }
+
+        function pararScanner() {
+            streamAtivo = false;
+            if (videoElement && videoElement.srcObject) {
+                try {
+                    videoElement.srcObject.getTracks().forEach(track => {
+                        track.stop();
+                    });
+                    videoElement.srcObject = null;
+                } catch (e) {
+                    console.error('Erro ao parar stream:', e);
+                }
+            }
+            videoElement = null;
+        }
+
+        function tratarErro(err) {
+            console.error('Erro completo:', err);
+            let mensagem = '';
+
+            if (!err) {
+                mensagem = '❌ <strong>Erro desconhecido</strong><br>Tente recarregar a página.';
+            } else if (err.name === 'NotAllowedError') {
+                mensagem = '❌ <strong>Permissão Negada</strong><br>Clique no ícone de câmera/permissão na barra de endereço e selecione "Permitir".';
+            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                mensagem = '❌ <strong>Câmera não encontrada</strong><br>Verifique se seu dispositivo possui câmera conectada.';
+            } else if (err.name === 'NotReadableError' || err.name === 'TrackStartError') {
+                mensagem = '❌ <strong>Câmera em uso</strong><br>Feche outros aplicativos que estão usando a câmera.';
+            } else if (err.name === 'OverconstrainedError') {
+                mensagem = '❌ <strong>Câmera não pode ser usada com essas configurações</strong><br>Tente recarregar a página.';
+            } else if (err.name === 'SecurityError') {
+                mensagem = '❌ <strong>Erro de Segurança</strong><br>Use HTTPS ou abra em incógnito se em modo restrito.';
+            } else {
+                mensagem = '❌ <strong>Erro:</strong> ' + (err.message || err.name || 'Desconhecido') + 
+                          '<br>Tente usar um navegador diferente (Chrome, Firefox, Safari ou Edge).';
+            }
+
+            mostrarErro(mensagem);
+        }
+
+        function mostrarErro(mensagem) {
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('qr-reader').style.display = 'none';
+            const errorDiv = document.getElementById('camera-error');
+            errorDiv.innerHTML = '<strong>⚠️ Erro:</strong><br>' + mensagem + 
+                '<br><br><small>💡 <strong>Alternativa:</strong> Você pode digitar o código manualmente no campo de Código de Barras.</small>';
+            errorDiv.style.display = 'block';
+            atualizarInfo('');
+            streamAtivo = false;
+            pararScanner();
+        }
+
+        function atualizarInfo(mensagem) {
+            const infoEl = document.getElementById('camera-info');
+            if (infoEl) {
+                infoEl.innerHTML = '<small><i class="bi bi-info-circle"></i> ' + mensagem + '</small>';
+            }
+        }
+
+        function tocarSomSucesso() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscilador = audioContext.createOscillator();
+                const ganho = audioContext.createGain();
+                
+                oscilador.connect(ganho);
+                ganho.connect(audioContext.destination);
+                ganho.gain.setValueAtTime(0.3, audioContext.currentTime);
+                ganho.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscilador.frequency.value = 800;
+                oscilador.start(audioContext.currentTime);
+                oscilador.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                // Som não suportado
+            }
+        }
+
+        // Listener para o botão "Usar Código"
+        document.addEventListener('DOMContentLoaded', function() {
+            const usarCodigoBtn = document.getElementById('usarCodigoBtn');
+            if (usarCodigoBtn) {
+                usarCodigoBtn.addEventListener('click', function() {
+                    if (ultimoCodigoDetectado) {
+                        document.getElementById('codigoBarras').value = ultimoCodigoDetectado;
+                        if (cameraModal) {
+                            cameraModal.hide();
+                        }
+                        ultimoCodigoDetectado = null;
+                        document.getElementById('qr-reader-results').style.display = 'none';
+                        document.getElementById('usarCodigoBtn').disabled = true;
+                        pararScanner();
+                        alert('✓ Código de barras preenchido com sucesso!');
+                    } else {
+                        alert('Nenhum código foi detectado. Por favor, tente novamente.');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
