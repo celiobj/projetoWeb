@@ -5,6 +5,7 @@
 package com.controlefacilWeb.demo.util;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -25,6 +26,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -740,6 +742,116 @@ public class Util {
         }
 
         return retorno;
+    }
+
+    public static void atualizarBaseDados() {
+        Properties prop;
+        try {
+            prop = getProp();
+        } catch (IOException ex) {
+            Logger.getLogger(Util.class.getName()).log(Level.SEVERE, "Erro ao ler barberoficial.properties", ex);
+            return;
+        }
+
+        String cliente = prop.getProperty("prop.client");
+        String produto = prop.getProperty("prop.produto");
+        String ftpHost = "ftp.bragancasystems.com.br";
+        String ftpUser = "atualizacao@bragancasystems.com.br";
+        String ftpPass = "66@slip66";
+        String ftpDir = "/" + produto + "/";
+        String localUpdateDir = "data/" + produto;
+        String localZipPath = localUpdateDir + "/" + cliente + ".zip";
+        String localAccdbPath = localUpdateDir + "/" + cliente + ".accdb";
+
+        new Thread(() -> {
+            try {
+                java.nio.file.Files.createDirectories(java.nio.file.Paths.get(localUpdateDir));
+                java.io.File accdbFile = new java.io.File(localAccdbPath);
+                java.io.File zipFile = new java.io.File(localZipPath);
+                if (accdbFile.exists()) {
+                    return;
+                }
+
+                org.apache.commons.net.ftp.FTPClient ftp = new org.apache.commons.net.ftp.FTPClient();
+                ftp.connect(ftpHost);
+                if (!ftp.login(ftpUser, ftpPass)) {
+                    Logger.getLogger(Util.class.getName()).log(Level.WARNING, "Falha no login do FTP");
+                    ftp.disconnect();
+                    return;
+                }
+                ftp.enterLocalPassiveMode();
+                ftp.setFileType(org.apache.commons.net.ftp.FTP.BINARY_FILE_TYPE);
+                ftp.changeWorkingDirectory(ftpDir);
+
+                org.apache.commons.net.ftp.FTPFile[] files = ftp.listFiles();
+                String zipFileName = null;
+                for (org.apache.commons.net.ftp.FTPFile file : files) {
+                    if (file.getName().equalsIgnoreCase(cliente + ".zip")) {
+                        zipFileName = file.getName();
+                        break;
+                    }
+                }
+                if (zipFileName == null) {
+                    Logger.getLogger(Util.class.getName()).log(Level.WARNING, "Arquivo de atualização não encontrado no FTP.");
+                    ftp.logout();
+                    ftp.disconnect();
+                    return;
+                }
+
+                Logger.getLogger(Util.class.getName()).log(Level.INFO, "Baixando atualização do FTP...");
+                try (java.io.OutputStream output = new java.io.FileOutputStream(localZipPath)) {
+                    boolean success = ftp.retrieveFile(zipFileName, output);
+                    if (!success) {
+                        Logger.getLogger(Util.class.getName()).log(Level.WARNING, "Falha ao baixar o arquivo do FTP.");
+                        ftp.logout();
+                        ftp.disconnect();
+                        return;
+                    }
+                }
+                ftp.logout();
+                ftp.disconnect();
+
+                if (zipFile.exists()) {
+                    Logger.getLogger(Util.class.getName()).log(Level.INFO, "Descompactando atualização...");
+                    String canonicalDest = new java.io.File(localUpdateDir).getCanonicalPath() + java.io.File.separator;
+                    try (java.util.zip.ZipInputStream zis = new java.util.zip.ZipInputStream(
+                            new java.io.FileInputStream(localZipPath))) {
+                        java.util.zip.ZipEntry entry;
+                        while ((entry = zis.getNextEntry()) != null) {
+                            java.io.File outFile = new java.io.File(localUpdateDir, entry.getName());
+                            if (!outFile.getCanonicalPath().startsWith(canonicalDest)) {
+                                throw new IOException("Caminho inválido no ZIP: " + entry.getName());
+                            }
+                            if (entry.isDirectory()) {
+                                outFile.mkdirs();
+                            } else {
+                                if (outFile.getParentFile() != null) outFile.getParentFile().mkdirs();
+                                try (java.io.FileOutputStream fos = new java.io.FileOutputStream(outFile)) {
+                                    byte[] buffer = new byte[8192];
+                                    int len;
+                                    while ((len = zis.read(buffer)) > 0) {
+                                        fos.write(buffer, 0, len);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    zipFile.delete();
+                    Logger.getLogger(Util.class.getName()).log(Level.INFO, "Atualização concluída.");
+                }
+            } catch (Exception ex) {
+                Logger.getLogger(Util.class.getName()).log(Level.SEVERE, "Erro na atualização da base de dados", ex);
+            }
+        }).start();
+    }
+
+    public static Properties getProp() throws IOException {
+        Properties props = new Properties();
+        FileInputStream file = new FileInputStream(
+                "data/barberoficial.properties");
+        props.load(file);
+        return props;
+
     }
 
 }

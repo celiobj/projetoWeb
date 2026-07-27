@@ -5,6 +5,10 @@ import com.controlefacilWeb.demo.repositories.persistence.RepositorioUsuario;
 import jakarta.servlet.http.HttpSession;
 import com.controlefacilWeb.demo.util.Util;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -47,6 +51,22 @@ public class LoginController {
                                  @RequestParam String senha,
                                  HttpSession session,
                                  Model model) {
+
+        // 0. Verifica se o arquivo de banco de dados existe na pasta data/
+        try (InputStream confIs = getClass().getClassLoader().getResourceAsStream("conf.properties")) {
+            if (confIs != null) {
+                Properties conf = new Properties();
+                conf.load(confIs);
+                String dbPath = conf.getProperty("db.path", "").trim();
+                if (!dbPath.isEmpty() && !new java.io.File(dbPath).exists()) {
+                    Util.atualizarBaseDados();
+                    model.addAttribute("info", "Base de dados não encontrada. Download iniciado em segundo plano — aguarde alguns instantes e tente novamente.");
+                    return "login";
+                }
+            }
+        } catch (IOException e) {
+            // conf.properties indisponível — continua normalmente
+        }
 
         // 1. Credenciais estáticas (application.properties)
         if (usuarioConfigurado.equals(usuario) && senhaConfigurada.equals(senha)) {

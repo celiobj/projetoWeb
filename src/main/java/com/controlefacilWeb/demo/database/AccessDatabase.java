@@ -125,7 +125,7 @@ public class AccessDatabase {
                 throw new IllegalStateException(
                     "Defina 'db.path' ou 'cliente' em " + CONF_FILE);
             }
-            filename = "C:/Sistemas/BD/Bragasi/" + cliente.trim() + ".accdb";
+            filename = "data/" + cliente.trim() + ".accdb";
         }
 
         try {
