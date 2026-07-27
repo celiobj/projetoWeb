@@ -54,7 +54,7 @@ public class AgendamentoController {
                 response = rest.Post(url, request);
                 if (response.statusCode() == 201) {
                     EnderecoControler ec = new EnderecoControler();
-                    ClienteModel cliente = new ClienteModel(agendamento.getCodigoCliente(), "", agendamento.getCodigoCliente(), "");
+                    ClienteModel cliente = new ClienteModel(agendamento.getCodigoCliente(), "", "", "", "");
                     char origem = 'C';
                     PessoaModel pessoaEndereco = cliente;
                     ArrayList<ArrayList> itensTabela = ec.ListarTodosEnderecos(origem, pessoaEndereco);

@@ -35,9 +35,11 @@ public class RepositorioCliente implements RepositorioClienteInterface {
             try (Connection con = a.conectar()) {
                 Statement st = con.createStatement();
                 st.execute("INSERT INTO public.cliente "
-                        + "(nome, cpf) values("
+                        + "(nome, documento, sexo, numerosus) values("
                         + "'" + cliente.getNome() + "', "
-                        + "'" + cliente.getCpf() + "')");
+                        + "'" + cliente.getDocumento() + "', "
+                        + "'" + cliente.getSexo() + "', "
+                        + "'" + cliente.getNumerosus() + "')");
                 // con.close();
             }
 
@@ -59,9 +61,11 @@ public class RepositorioCliente implements RepositorioClienteInterface {
         try {
             ArrayList<ArrayList> linhas = new ArrayList<>();
             AccessDatabase a = new AccessDatabase();
-            try (Connection con = a.conectar()) {
+            Connection con = a.conectar();
+            if (con == null) return null;
+            try (con) {
                 Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("SELECT c.codigocliente,c.nome,c.cpf "
+                ResultSet rs = st.executeQuery("SELECT c.codigocliente, c.nome, c.documento, c.sexo, c.numerosus "
                         + "FROM public.cliente c "
                         + "ORDER BY c.codigocliente");
                 rs.next();
@@ -69,12 +73,11 @@ public class RepositorioCliente implements RepositorioClienteInterface {
                 do {
                     linhas.add(Util.proximaLinha(rs, rsmd));
                 } while (rs.next());
-                // con.close();
             }
 
             return linhas;
 
-        } catch (SQLException t) {
+        } catch (Throwable t) {
             System.out.println(t.getMessage());
             return null;
 
@@ -93,18 +96,18 @@ public class RepositorioCliente implements RepositorioClienteInterface {
                 Statement st = con.createStatement();
                 ResultSet rs;
                 if (status == 'S') {
-                    rs = st.executeQuery("SELECT c.codigocliente,c.nome, c.cpf  "
+                    rs = st.executeQuery("SELECT c.codigocliente, c.nome, c.documento "
                             + "FROM public.cliente c  "
                             + "ORDER BY c.codigocliente");
                 } else {
-                    rs = st.executeQuery("SELECT c.codigocliente,c.nome, c.cpf "
+                    rs = st.executeQuery("SELECT c.codigocliente, c.nome, c.documento "
                             + "FROM public.cliente c  "
                             + "ORDER BY c.codigocliente");
                 }
                 while (rs.next()) {
 
                     clientes.add(
-                            rs.getInt("codigocliente") + "- " + rs.getString("nome") + "- " + rs.getString("cpf") + "");
+                            rs.getInt("codigocliente") + "- " + rs.getString("nome") + "- " + rs.getString("documento") + "");
                 }
                 ;
                 // con.close();
@@ -132,8 +135,10 @@ public class RepositorioCliente implements RepositorioClienteInterface {
                 if (rs.next()) {
                     ClienteModel cliente = new ClienteModel(
                             codigoCliente,
-                            rs.getString("nome"));
-                    cliente.setCpf(rs.getString("cpf"));
+                            rs.getString("nome"),
+                            rs.getString("documento"),
+                            rs.getString("sexo"),
+                            rs.getString("numerosus"));
                     return cliente;
                 }
             }
@@ -156,8 +161,10 @@ public class RepositorioCliente implements RepositorioClienteInterface {
                 if (rs.next()) {
                     ClienteModel cliente = new ClienteModel(
                             rs.getInt("codigocliente"),
-                            rs.getString("nome"));
-                    cliente.setCpf(rs.getString("cpf"));
+                            rs.getString("nome"),
+                            rs.getString("documento"),
+                            rs.getString("sexo"),
+                            rs.getString("numerosus"));
                     return cliente;
                 }
             }
@@ -176,7 +183,9 @@ public class RepositorioCliente implements RepositorioClienteInterface {
                 Statement st = con.createStatement();
                 st.execute("UPDATE public.cliente "
                         + "SET nome = '" + cliente.getNome() + "', "
-                        + "cpf = '" + cliente.getCpf() + "' "
+                        + "documento = '" + cliente.getDocumento() + "', "
+                        + "sexo = '" + cliente.getSexo() + "', "
+                        + "numerosus = '" + cliente.getNumerosus() + "' "
                         + "WHERE codigocliente = " + cliente.getCodigoCliente());
                 // con.close();
             }

@@ -12,12 +12,15 @@ import lombok.NoArgsConstructor;
 public class ClienteModel extends PessoaModel {
 
     private int codigoCliente;
-    private String cpf;
+    private String documento;
+    private String sexo;
+    private String numerosus;
 
-    public ClienteModel(int codigoCliente, String nome, int codigoPessoa, String cpf) {
-        setCodigoPessoa(codigoPessoa);
+    public ClienteModel(int codigoCliente, String nome, String documento, String sexo, String numerosus) {
         setNome(nome);
         this.codigoCliente = codigoCliente;
-        this.cpf = cpf;
+        this.documento = documento;
+        this.sexo = sexo;
+        this.numerosus = numerosus;
     }
 }

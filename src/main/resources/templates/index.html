@@ -14,125 +14,167 @@
             flex-direction: column;
         }
         .navbar {
-            background: rgba(0, 0, 0, 0.1) !important;
+            background: rgba(0, 0, 0, 0.15) !important;
             backdrop-filter: blur(10px);
             box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
-        .navbar-brand {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        .hero {
+        .navbar-brand { font-weight: bold; font-size: 1.5rem; }
+        .main-content {
             flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             color: white;
-            text-align: center;
             padding: 40px 20px;
         }
-        .hero h1 {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        .hero p {
-            font-size: 1.3rem;
-            margin-bottom: 30px;
-        }
-        .btn-group-custom {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-        .btn-group-custom .btn {
-            padding: 12px 30px;
-            font-size: 1.1rem;
-            border-radius: 50px;
-            border: 2px solid white;
-            transition: all 0.3s ease;
-        }
-        .btn-light {
-            color: #667eea;
-            background: white;
-        }
-        .btn-light:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-        }
-        .btn-outline-light:hover {
-            background: white;
-            color: #667eea;
-            transform: translateY(-3px);
-        }
-        .feature-box {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            text-align: center;
-        }
-        .feature-box i {
+        .main-content h1 {
             font-size: 2.5rem;
-            margin-bottom: 15px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
         }
-        footer {
-            background: rgba(0, 0, 0, 0.2);
-            color: white;
-            padding: 20px;
+        .main-content .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+        }
+        .module-group { margin-bottom: 35px; }
+        .module-group-title {
+            font-size: 1rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 8px;
+        }
+        .module-card {
+            background: rgba(255,255,255,0.12);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 18px 14px;
             text-align: center;
-            margin-top: auto;
+            color: white;
+            text-decoration: none;
+            display: block;
+            transition: all 0.25s ease;
+            height: 100%;
+        }
+        .module-card:hover {
+            background: rgba(255,255,255,0.22);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            color: white;
+        }
+        .module-card i { font-size: 2rem; margin-bottom: 8px; display: block; }
+        .module-card span { font-size: 0.85rem; font-weight: 600; }
+        footer {
+            background: rgba(0,0,0,0.2);
+            color: white;
+            padding: 16px;
+            text-align: center;
         }
     </style>
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi bi-graph-up"></i> ControleFácil Web
-            </a>
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/"><i class="bi bi-graph-up"></i> ControleFácil Web</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
+                    <!-- Atendimento -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdownProduto" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-box me-1"></i>Produto
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-calendar-check me-1"></i>Atendimento
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownProduto">
-                            <li><a class="dropdown-item" href="/produtos">
-                                <i class="bi bi-list me-2"></i>Produtos
-                            </a></li>
-                            <li><a class="dropdown-item" href="/produtos/novo">
-                                <i class="bi bi-plus-circle me-2"></i>Cadastro de Produto
-                            </a></li>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/agendamentos"><i class="bi bi-calendar-date me-2"></i>Agendamentos</a></li>
+                            <li><a class="dropdown-item" href="/agendamentos/novo"><i class="bi bi-calendar-plus me-2"></i>Novo Agendamento</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/ordens-servico"><i class="bi bi-clipboard-check me-2"></i>Ordens de Serviço</a></li>
+                            <li><a class="dropdown-item" href="/ordens-servico/novo"><i class="bi bi-clipboard-plus me-2"></i>Nova Ordem</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/notificacoes"><i class="bi bi-bell me-2"></i>Notificações</a></li>
                         </ul>
                     </li>
+                    <!-- Pessoas -->
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="dropdownUsuario" role="button"
-                           data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-person me-1"></i>Usuário
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-people me-1"></i>Pessoas
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownUsuario">
-                            <li><a class="dropdown-item" href="/usuarios">
-                                <i class="bi bi-people me-2"></i>Listagem de Usuários
-                            </a></li>
-                            <li><a class="dropdown-item" href="/usuarios/novo">
-                                <i class="bi bi-person-plus me-2"></i>Cadastro de Usuário
-                            </a></li>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/clientes"><i class="bi bi-person-vcard me-2"></i>Clientes</a></li>
+                            <li><a class="dropdown-item" href="/clientes/novo"><i class="bi bi-person-plus me-2"></i>Novo Cliente</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/funcionarios"><i class="bi bi-person-badge me-2"></i>Funcionários</a></li>
+                            <li><a class="dropdown-item" href="/funcionarios/novo"><i class="bi bi-person-add me-2"></i>Novo Funcionário</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/fornecedores"><i class="bi bi-truck me-2"></i>Fornecedores</a></li>
+                            <li><a class="dropdown-item" href="/fornecedores/novo"><i class="bi bi-plus-circle me-2"></i>Novo Fornecedor</a></li>
+                        </ul>
+                    </li>
+                    <!-- Financeiro -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-cash-coin me-1"></i>Financeiro
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/contas"><i class="bi bi-bank me-2"></i>Contas</a></li>
+                            <li><a class="dropdown-item" href="/contas/novo"><i class="bi bi-plus-circle me-2"></i>Nova Conta</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/cartoes"><i class="bi bi-credit-card me-2"></i>Cartões</a></li>
+                            <li><a class="dropdown-item" href="/cartoes/novo"><i class="bi bi-plus-circle me-2"></i>Novo Cartão</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/comissoes"><i class="bi bi-percent me-2"></i>Comissões</a></li>
+                            <li><a class="dropdown-item" href="/comissoes/novo"><i class="bi bi-plus-circle me-2"></i>Nova Comissão</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/formas-pagamento"><i class="bi bi-wallet2 me-2"></i>Formas de Pagamento</a></li>
+                            <li><a class="dropdown-item" href="/formas-pagamento/novo"><i class="bi bi-plus-circle me-2"></i>Nova Forma</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/notas-compradas"><i class="bi bi-receipt me-2"></i>Notas de Compra</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/instituicoes"><i class="bi bi-building me-2"></i>Instituições</a></li>
+                            <li><a class="dropdown-item" href="/instituicoes/novo"><i class="bi bi-plus-circle me-2"></i>Nova Instituição</a></li>
+                        </ul>
+                    </li>
+                    <!-- Estoque -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-box me-1"></i>Estoque
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/produtos"><i class="bi bi-box me-2"></i>Produtos</a></li>
+                            <li><a class="dropdown-item" href="/produtos/novo"><i class="bi bi-plus-circle me-2"></i>Novo Produto</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/categorias"><i class="bi bi-tags me-2"></i>Categorias</a></li>
+                            <li><a class="dropdown-item" href="/categorias/novo"><i class="bi bi-plus-circle me-2"></i>Nova Categoria</a></li>
+                        </ul>
+                    </li>
+                    <!-- Configurações -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                            <i class="bi bi-gear me-1"></i>Configurações
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/lojas"><i class="bi bi-shop me-2"></i>Lojas</a></li>
+                            <li><a class="dropdown-item" href="/lojas/novo"><i class="bi bi-plus-circle me-2"></i>Nova Loja</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/horarios"><i class="bi bi-clock me-2"></i>Horários</a></li>
+                            <li><a class="dropdown-item" href="/horarios/novo"><i class="bi bi-plus-circle me-2"></i>Novo Horário</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/enderecos"><i class="bi bi-geo-alt me-2"></i>Endereços</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/usuarios"><i class="bi bi-people me-2"></i>Usuários</a></li>
+                            <li><a class="dropdown-item" href="/usuarios/novo"><i class="bi bi-person-plus me-2"></i>Novo Usuário</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/configuracoes"><i class="bi bi-sliders me-2"></i>Configurações do Sistema</a></li>
                         </ul>
                     </li>
                     <li class="nav-item ms-2">
-                        <a class="nav-link btn btn-outline-light btn-sm px-3"
-                           href="/logout">
+                        <a class="nav-link btn btn-outline-light btn-sm px-3" href="/logout">
                             <i class="bi bi-box-arrow-right me-1"></i>Sair
                         </a>
                     </li>
@@ -141,40 +183,140 @@
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <div class="hero">
-        <div>
-            <h1>Bem-vindo ao ControleFácil</h1>
-            <p>Sistema de gestão de produtos simples e eficiente</p>
-            <div class="btn-group-custom">
-                <a href="/produtos" class="btn btn-light">
-                    <i class="bi bi-list"></i> Ver Produtos
-                </a>
-                <a href="/produtos/novo" class="btn btn-outline-light">
-                    <i class="bi bi-plus-circle"></i> Novo Produto
-                </a>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="container-fluid px-4">
+            <div class="text-center mb-5">
+                <h1><i class="bi bi-graph-up me-2"></i>ControleFácil</h1>
+                <p class="subtitle">Sistema completo de gestão — selecione um módulo para começar</p>
             </div>
 
-            <div class="row mt-5" style="max-width: 900px; margin: 50px auto 0;">
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-box"></i>
-                        <h5>Gestão de Produtos</h5>
-                        <p>Cadastre e organize seus produtos de forma simples</p>
+            <!-- Atendimento -->
+            <div class="module-group">
+                <div class="module-group-title"><i class="bi bi-calendar-check me-2"></i>Atendimento</div>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/agendamentos" class="module-card">
+                            <i class="bi bi-calendar-date"></i><span>Agendamentos</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/ordens-servico" class="module-card">
+                            <i class="bi bi-clipboard-check"></i><span>Ordens de Serviço</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/notificacoes" class="module-card">
+                            <i class="bi bi-bell"></i><span>Notificações</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-archive"></i>
-                        <h5>Controle de Estoque</h5>
-                        <p>Monitore quantidade e disponibilidade em tempo real</p>
+            </div>
+
+            <!-- Pessoas -->
+            <div class="module-group">
+                <div class="module-group-title"><i class="bi bi-people me-2"></i>Pessoas</div>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/clientes" class="module-card">
+                            <i class="bi bi-person-vcard"></i><span>Clientes</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/funcionarios" class="module-card">
+                            <i class="bi bi-person-badge"></i><span>Funcionários</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/fornecedores" class="module-card">
+                            <i class="bi bi-truck"></i><span>Fornecedores</span>
+                        </a>
                     </div>
                 </div>
-                <div class="col-md-4">
-                    <div class="feature-box">
-                        <i class="bi bi-search"></i>
-                        <h5>Buscas Rápidas</h5>
-                        <p>Encontre produtos com filtros avançados</p>
+            </div>
+
+            <!-- Financeiro -->
+            <div class="module-group">
+                <div class="module-group-title"><i class="bi bi-cash-coin me-2"></i>Financeiro</div>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/contas" class="module-card">
+                            <i class="bi bi-bank"></i><span>Contas</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/cartoes" class="module-card">
+                            <i class="bi bi-credit-card"></i><span>Cartões</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/comissoes" class="module-card">
+                            <i class="bi bi-percent"></i><span>Comissões</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/formas-pagamento" class="module-card">
+                            <i class="bi bi-wallet2"></i><span>Formas de Pagamento</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/notas-compradas" class="module-card">
+                            <i class="bi bi-receipt"></i><span>Notas de Compra</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/instituicoes" class="module-card">
+                            <i class="bi bi-building"></i><span>Instituições</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Estoque -->
+            <div class="module-group">
+                <div class="module-group-title"><i class="bi bi-box me-2"></i>Estoque</div>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/produtos" class="module-card">
+                            <i class="bi bi-box"></i><span>Produtos</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/categorias" class="module-card">
+                            <i class="bi bi-tags"></i><span>Categorias</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Configurações -->
+            <div class="module-group">
+                <div class="module-group-title"><i class="bi bi-gear me-2"></i>Configurações</div>
+                <div class="row g-3">
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/lojas" class="module-card">
+                            <i class="bi bi-shop"></i><span>Lojas</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/horarios" class="module-card">
+                            <i class="bi bi-clock"></i><span>Horários</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/enderecos" class="module-card">
+                            <i class="bi bi-geo-alt"></i><span>Endereços</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/usuarios" class="module-card">
+                            <i class="bi bi-person-lock"></i><span>Usuários</span>
+                        </a>
+                    </div>
+                    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+                        <a href="/configuracoes" class="module-card">
+                            <i class="bi bi-sliders"></i><span>Configurações</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -183,7 +325,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2024 ControleFácil. Todos os direitos reservados.</p>
+        <p class="mb-0">&copy; 2024 ControleFácil. Todos os direitos reservados.</p>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
