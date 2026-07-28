@@ -34,8 +34,8 @@ public class AccessDatabase {
 
     public AccessDatabase() {
         conf = new Properties();
-        // try (InputStream is = getClass().getClassLoader().getResourceAsStream(CONF_FILE)) {
-        try (InputStream is = new java.io.FileInputStream(new java.io.File("data/" + CONF_FILE))) {
+         try (InputStream is = getClass().getClassLoader().getResourceAsStream(CONF_FILE)) {
+        //try (InputStream is = new java.io.FileInputStream(new java.io.File("data/" + CONF_FILE))) {
             if (is != null) {
                 conf.load(is);
             }

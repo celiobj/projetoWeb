@@ -8,6 +8,7 @@ import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -847,8 +848,8 @@ public class Util {
 
     public static Properties getProp() throws IOException {
         Properties props = new Properties();
-        FileInputStream file = new FileInputStream(
-                "data/barberoficial.properties");
+        InputStream file = Util.class.getClassLoader().getResourceAsStream(
+                "barberoficial.properties");
         props.load(file);
         return props;
 
