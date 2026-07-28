@@ -53,7 +53,7 @@ public class LoginController {
                                  Model model) {
 
         // 0. Verifica se o arquivo de banco de dados existe na pasta data/
-        try (InputStream confIs = getClass().getClassLoader().getResourceAsStream("conf.properties")) {
+        try (InputStream confIs = new java.io.FileInputStream(new java.io.File("data/conf.properties"))) {
             if (confIs != null) {
                 Properties conf = new Properties();
                 conf.load(confIs);
