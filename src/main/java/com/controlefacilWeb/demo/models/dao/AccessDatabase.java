@@ -166,7 +166,7 @@ public class AccessDatabase implements IDatabase {
                 }
             }
             case 2 -> {
-                setUrl("jdbc:postgresql://localhost/ultrabarber");
+                setUrl("jdbc:postgresql://localhost/bragasi");
                 setUser("postgres");
                 setPassword("slipclown");
             }
