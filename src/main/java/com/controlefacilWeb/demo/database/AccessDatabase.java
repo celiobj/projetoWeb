@@ -158,7 +158,7 @@ public class AccessDatabase {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
-        String host = conf.getProperty("pg.local.host", "127.0.0.1");
+        String host = conf.getProperty("pg.local.host", "localhost");
         String port = conf.getProperty("pg.local.port", "5432");
         String db = conf.getProperty("pg.local.database", "bragasi");
         String user = conf.getProperty("pg.local.user", "postgres");
