@@ -165,6 +165,11 @@ public class AccessDatabase {
         String pass = conf.getProperty("pg.local.password", "slipclown");
         String url = "jdbc:postgresql://" + host + ":" + port + "/" + db;
         try {
+            System.out.println("Host: " + host);
+            System.out.println("Port: " + port);
+            System.out.println("Database: " + db);
+            System.out.println("User: " + user);
+            System.out.println("URL: " + url);
             return DriverManager.getConnection(url, user, pass);
         } catch (SQLException e) {
             // TODO Auto-generated catch block
